@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Waste Collection Router</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <!-- HEADER -->
+
+        <header class="header">
+
+            <div>
+                <h1>Smart Waste Collection Router</h1>
+                <p>AI-powered waste collection dashboard</p>
+            </div>
+
+            <div class="system">
+                <span class="dot"></span>
+                System Online
+            </div>
+
+        </header>
+
+
+        <!-- STAT CARDS -->
+
+        <section class="stats">
+
+            <div class="stat-card">
+                <span class="icon">🗑️</span>
+
+                <div>
+                    <p>Total Bins</p>
+                    <h2>25</h2>
+                </div>
+            </div>
+
+
+            <div class="stat-card urgent-card">
+                <span class="icon">⚠️</span>
+
+                <div>
+                    <p>Urgent Bins</p>
+                    <h2>8</h2>
+                </div>
+            </div>
+
+
+            <div class="stat-card">
+                <span class="icon">🚛</span>
+
+                <div>
+                    <p>Active Trucks</p>
+                    <h2>3</h2>
+                </div>
+            </div>
+
+
+            <div class="stat-card">
+                <span class="icon">📍</span>
+
+                <div>
+                    <p>Route Distance</p>
+                    <h2>15.4 km</h2>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- MAIN CONTENT -->
+
+        <section class="main-grid">
+
+
+            <!-- BIN STATUS -->
+
+            <div class="card">
+
+                <div class="card-title">
+
+                    <div>
+                        <h2>Bin Status</h2>
+                        <p>Current and predicted fill levels</p>
+                    </div>
+
+                </div>
+
+
+                <div class="bin-list">
+
+
+                    <!-- B1 -->
+
+                    <div class="bin">
+
+                        <div class="bin-name">
+                            <strong>B1</strong>
+                            <span>Main Street</span>
+                        </div>
+
+                        <div class="bar-section">
+
+                            <div class="bar-label">
+                                <span>Current</span>
+                                <strong>82%</strong>
+                            </div>
+
+                            <div class="bar">
+                                <div class="fill orange"
+                                     style="width:82%">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="prediction">
+                            <span>Predicted</span>
+                            <strong>83%</strong>
+                        </div>
+
+                        <span class="status high">
+                            HIGH
+                        </span>
+
+                    </div>
+
+
+                    <!-- B2 -->
+
+                    <div class="bin">
+
+                        <div class="bin-name">
+                            <strong>B2</strong>
+                            <span>Station Road</span>
+                        </div>
+
+                        <div class="bar-section">
+
+                            <div class="bar-label">
+                                <span>Current</span>
+                                <strong>45%</strong>
+                            </div>
+
+                            <div class="bar">
+                                <div class="fill green"
+                                     style="width:45%">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="prediction">
+                            <span>Predicted</span>
+                            <strong>47%</strong>
+                        </div>
+
+                        <span class="status normal">
+                            NORMAL
+                        </span>
+
+                    </div>
+
+
+                    <!-- B3 -->
+
+                    <div class="bin">
+
+                        <div class="bin-name">
+                            <strong>B3</strong>
+                            <span>College Road</span>
+                        </div>
+
+                        <div class="bar-section">
+
+                            <div class="bar-label">
+                                <span>Current</span>
+                                <strong>88%</strong>
+                            </div>
+
+                            <div class="bar">
+                                <div class="fill red"
+                                     style="width:88%">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="prediction">
+                            <span>Predicted</span>
+                            <strong>89%</strong>
+                        </div>
+
+                        <span class="status urgent">
+                            URGENT
+                        </span>
+
+                    </div>
+
+
+                    <!-- B4 -->
+
+                    <div class="bin">
+
+                        <div class="bin-name">
+                            <strong>B4</strong>
+                            <span>Market Road</span>
+                        </div>
+
+                        <div class="bar-section">
+
+                            <div class="bar-label">
+                                <span>Current</span>
+                                <strong>45%</strong>
+                            </div>
+
+                            <div class="bar">
+                                <div class="fill green"
+                                     style="width:45%">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="prediction">
+                            <span>Predicted</span>
+                            <strong>47%</strong>
+                        </div>
+
+                        <span class="status normal">
+                            NORMAL
+                        </span>
+
+                    </div>
+
+
+                    <!-- B5 -->
+
+                    <div class="bin">
+
+                        <div class="bin-name">
+                            <strong>B5</strong>
+                            <span>Bus Stand</span>
+                        </div>
+
+                        <div class="bar-section">
+
+                            <div class="bar-label">
+                                <span>Current</span>
+                                <strong>91%</strong>
+                            </div>
+
+                            <div class="bar">
+                                <div class="fill red"
+                                     style="width:91%">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="prediction">
+                            <span>Predicted</span>
+                            <strong>89%</strong>
+                        </div>
+
+                        <span class="status urgent">
+                            URGENT
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ROUTE -->
+
+            <div class="card route-card">
+
+                <div class="card-title">
+
+                    <div>
+                        <h2>Optimized Route</h2>
+                        <p>Generated using A* algorithm</p>
+                    </div>
+
+                </div>
+
+
+                <div class="route">
+
+                    <div class="route-point">
+                        <div class="point depot">D</div>
+                        <span>Depot</span>
+                    </div>
+
+
+                    <div class="line"></div>
+
+
+                    <div class="route-point">
+                        <div class="point">B1</div>
+                        <span>Bin B1</span>
+                    </div>
+
+
+                    <div class="line"></div>
+
+
+                    <div class="route-point">
+                        <div class="point">B3</div>
+                        <span>Bin B3</span>
+                    </div>
+
+
+                    <div class="line"></div>
+
+
+                    <div class="route-point">
+                        <div class="point">B5</div>
+                        <span>Bin B5</span>
+                    </div>
+
+                </div>
+
+
+                <div class="route-info">
+
+                    <div>
+                        <span>Route</span>
+                        <strong>DEPOT → B1 → B3 → B5</strong>
+                    </div>
+
+                    <div>
+                        <span>Distance</span>
+                        <strong>15.4 km</strong>
+                    </div>
+
+                    <div>
+                        <span>Bins Collected</span>
+                        <strong>3</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- BOTTOM SECTION -->
+
+        <section class="bottom-grid">
+
+
+            <!-- TRUCK STATUS -->
+
+            <div class="card">
+
+                <div class="card-title">
+
+                    <div>
+                        <h2>Truck Status</h2>
+                        <p>Current fleet information</p>
+                    </div>
+
+                </div>
+
+
+                <div class="truck">
+
+                    <div class="truck-icon">
+                        🚛
+                    </div>
+
+                    <div class="truck-details">
+                        <strong>TRUCK-01</strong>
+                        <span>Collection vehicle</span>
+                    </div>
+
+                    <span class="truck-status">
+                        ACTIVE
+                    </span>
+
+                </div>
+
+
+                <div class="truck">
+
+                    <div class="truck-icon">
+                        🚛
+                    </div>
+
+                    <div class="truck-details">
+                        <strong>TRUCK-02</strong>
+                        <span>Collection vehicle</span>
+                    </div>
+
+                    <span class="truck-status">
+                        ACTIVE
+                    </span>
+
+                </div>
+
+
+                <div class="truck">
+
+                    <div class="truck-icon">
+                        🚛
+                    </div>
+
+                    <div class="truck-details">
+                        <strong>TRUCK-03</strong>
+                        <span>Collection vehicle</span>
+                    </div>
+
+                    <span class="truck-status">
+                        ACTIVE
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- COLLECTION SUMMARY -->
+
+            <div class="card summary">
+
+                <div class="card-title">
+
+                    <div>
+                        <h2>Collection Summary</h2>
+                        <p>Today's collection performance</p>
+                    </div>
+
+                </div>
+
+
+                <div class="summary-item">
+
+                    <span>Bins Collected</span>
+
+                    <strong>17 / 25</strong>
+
+                </div>
+
+
+                <div class="summary-item">
+
+                    <span>Collection Progress</span>
+
+                    <strong>68%</strong>
+
+                </div>
+
+
+                <div class="summary-bar">
+
+                    <div style="width:68%"></div>
+
+                </div>
+
+
+                <div class="summary-item">
+
+                    <span>Estimated Fuel Saved</span>
+
+                    <strong>18.6 L</strong>
+
+                </div>
+
+
+                <div class="summary-item">
+
+                    <span>Route Efficiency</span>
+
+                    <strong class="green-text">
+                        94%
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- FOOTER -->
+
+        <footer>
+
+            Smart Waste Collection Router
+            <span>•</span>
+            Java + Python + A* + Regression
+
+        </footer>
+
+    </div>
+
+</body>
+</html>

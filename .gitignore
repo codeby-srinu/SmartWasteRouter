@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Java
+*.class
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated files
+backend/predictions.csv
+
+# Environment
+.env
+venv/
+.venv/
