@@ -1,10 +1,8 @@
 import csv
 
-# -----------------------------
-# Simple Linear Regression
-# -----------------------------
 
 def linear_regression(x, y):
+
     n = len(x)
 
     x_mean = sum(x) / n
@@ -14,8 +12,15 @@ def linear_regression(x, y):
     denominator = 0
 
     for i in range(n):
-        numerator += (x[i] - x_mean) * (y[i] - y_mean)
-        denominator += (x[i] - x_mean) ** 2
+
+        numerator += (
+            (x[i] - x_mean) *
+            (y[i] - y_mean)
+        )
+
+        denominator += (
+            (x[i] - x_mean) ** 2
+        )
 
     slope = numerator / denominator
 
@@ -24,105 +29,91 @@ def linear_regression(x, y):
     return slope, intercept
 
 
-# -----------------------------
-# Read CSV
-# -----------------------------
+# Historical days
+x = [1, 2, 3, 4, 5]
 
-input_file = "bin_data.csv"
-output_file = "predictions.csv"
+results = []
 
-with open(input_file, "r") as file:
+
+with open("bin_data.csv", "r") as file:
 
     reader = csv.DictReader(file)
 
-    rows = list(reader)
+    for row in reader:
+
+        bin_id = row["bin_id"]
+
+        current_fill = float(
+            row["current_fill"]
+        )
+
+        y = [
+            float(row["day1"]),
+            float(row["day2"]),
+            float(row["day3"]),
+            float(row["day4"]),
+            float(row["day5"])
+        ]
+
+        slope, intercept = linear_regression(
+            x,
+            y
+        )
+
+        predicted_fill = (
+            slope * 6 + intercept
+        )
+
+        predicted_fill = max(
+            0,
+            min(100, predicted_fill)
+        )
+
+        results.append({
+            "id": bin_id,
+            "current": current_fill,
+            "predicted": round(
+                predicted_fill,
+                2
+            )
+        })
 
 
-# Days 1 to 5
-
-x = [1, 2, 3, 4, 5]
-
-predictions = []
-
-
-# -----------------------------
-# Predict each bin
-# -----------------------------
-
-for row in rows:
-
-    bin_id = row["bin_id"]
-
-    y = [
-        float(row["day1"]),
-        float(row["day2"]),
-        float(row["day3"]),
-        float(row["day4"]),
-        float(row["day5"])
-    ]
-
-    current_fill = float(row["current_fill"])
-
-    slope, intercept = linear_regression(x, y)
-
-    # Predict day 6
-
-    predicted_fill = slope * 6 + intercept
-
-    # Keep value between 0 and 100
-
-    predicted_fill = max(0, min(100, predicted_fill))
-
-    predictions.append({
-        "bin_id": bin_id,
-        "current_fill": current_fill,
-        "predicted_fill": round(predicted_fill, 2)
-    })
-
-
-# -----------------------------
 # Save predictions
-# -----------------------------
 
-with open(output_file, "w", newline="") as file:
+with open(
+    "predictions.csv",
+    "w",
+    newline=""
+) as file:
 
-    fieldnames = [
+    writer = csv.writer(file)
+
+    writer.writerow([
         "bin_id",
         "current_fill",
         "predicted_fill"
-    ]
+    ])
 
-    writer = csv.DictWriter(
-        file,
-        fieldnames=fieldnames
-    )
+    for item in results:
 
-    writer.writeheader()
+        writer.writerow([
+            item["id"],
+            item["current"],
+            item["predicted"]
+        ])
 
-    writer.writerows(predictions)
 
+print("Python prediction completed.")
 
-# -----------------------------
-# Display result
-# -----------------------------
-
-print()
-print("======================================")
-print("      WASTE FILL PREDICTION")
-print("======================================")
-
-for item in predictions:
+for item in results:
 
     print(
-        item["bin_id"],
+        item["id"],
         "Current:",
-        item["current_fill"],
+        item["current"],
         "%",
         "Predicted:",
-        item["predicted_fill"],
+        item["predicted"],
         "%"
     )
-
-print()
-print("Prediction completed.")
-print("Created: predictions.csv")
