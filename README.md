@@ -64,3 +64,102 @@ A* Route Planning
 Truck Collection Route
         ↓
 Dashboard
+
+//sructure of project
+SmartWasteRouter/
+│
+├── backend/
+│   │
+│   ├── bin_data.csv
+│   ├── predict.py
+│   │
+│   ├── Bin.java
+│   ├── Truck.java
+│   ├── FleetManager.java
+│   ├── Graph.java
+│   ├── AStar.java
+│   └── Main.java
+│
+├── frontend/
+│   │
+│   ├── index.html
+│   ├── style.css
+│   └── script.js
+│
+├── screenshots/
+│   └── dashboard.png
+│
+├── README.md
+├── .gitignore
+└── LICENSE
+
+
+#WORKING
+              HISTORICAL DATA
+                    │
+                    ▼
+             ┌──────────────┐
+             │  bin_data.csv │
+             └──────┬───────┘
+                    │
+                    ▼
+             ┌──────────────┐
+             │  predict.py  │
+             │   Python     │
+             └──────┬───────┘
+                    │
+             Predict future
+              bin fill level
+                    │
+                    ▼
+          ┌────────────────────┐
+          │ predictions.csv    │
+          └─────────┬──────────┘
+                    │
+                    ▼
+             ┌──────────────┐
+             │   Bin.java   │
+             │  Bin Objects  │
+             └──────┬───────┘
+                    │
+                    ▼
+          ┌────────────────────┐
+          │  FleetManager.java │
+          │   PriorityQueue    │
+          └─────────┬──────────┘
+                    │
+            Highest priority
+                bins first
+                    │
+                    ▼
+             ┌──────────────┐
+             │  Graph.java  │
+             │  Road Network│
+             └──────┬───────┘
+                    │
+                    ▼
+             ┌──────────────┐
+             │   AStar.java │
+             │ Route Finding│
+             └──────┬───────┘
+                    │
+                    ▼
+             ┌──────────────┐
+             │   Truck.java │
+             │ Capacity Mgmt│
+             └──────┬───────┘
+                    │
+                    ▼
+              ┌───────────┐
+              │ Main.java │
+              │ Controller│
+              └─────┬─────┘
+                    │
+                    ▼
+             ┌──────────────┐
+             │   Frontend   │
+             │ HTML/CSS/JS  │
+             └──────────────┘
+                    │
+                    ▼
+              WEB DASHBOARD
