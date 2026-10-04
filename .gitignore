@@ -1,0 +1,16 @@
+# Java compiled files
+*.class
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Generated prediction file
+backend/predictions.csv
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
