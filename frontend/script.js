@@ -1,4 +1,31 @@
-gconst API_URL = 'http://localhost:8080/api/bins';
+// ================= 1. DATA =================
+
+// Map points. x and y are positions on the SVG map.
+const nodes = {
+  D:  { x: 60,  y: 150, name: 'Depot' },
+  B1: { x: 170, y: 60,  name: 'Bin B1' },
+  B2: { x: 170, y: 240, name: 'Bin B2' },
+  B3: { x: 300, y: 140, name: 'Bin B3' },
+  B4: { x: 300, y: 255, name: 'Bin B4' },
+  B5: { x: 450, y: 60,  name: 'Bin B5' }
+};
+
+// Roads: [from, to, length in km]
+const roads = [
+  ['D',  'B1', 3.2],
+  ['D',  'B2', 3.8],
+  ['B1', 'B3', 4.1],
+  ['B2', 'B3', 3.5],
+  ['B2', 'B4', 3.0],
+  ['B3', 'B4', 2.9],
+  ['B3', 'B5', 4.6],
+  ['B1', 'B5', 6.0]
+];
+
+// BACKEND: put your backend URL here (example: 'http://localhost:8080/api/bins').
+// It must return JSON like: [{ "id": "B1", "street": "Main Street", "c": 82, "r": 3 }, ...]
+// Leave it empty ('') to use the sample data below.
+const API_URL = '';
 
 // Bins: c = current fill %, r = fill rate (% per hour)
 function makeBins() {
@@ -179,6 +206,7 @@ function render() {
   renderBins();
   renderMap();
   renderDetail();
+  renderStops();
 
   $('btnDispatch').disabled = busy || todo.length === 0;
 }
@@ -289,8 +317,9 @@ function renderMap() {
     else if (onRoute.has(id)) color = level(bin.c)[2];      // on route = level color
 
     const isSelected = (selected === id);
+    const pulse = (id !== 'D' && onRoute.has(id) && bin.c >= 85) ? 'pulse' : '';
     svg += '<g class="node" data-id="' + id + '">' +
-      '<circle cx="' + n.x + '" cy="' + n.y + '" r="' + (isSelected ? 26 : 22) +
+      '<circle class="' + pulse + '" cx="' + n.x + '" cy="' + n.y + '" r="' + (isSelected ? 26 : 22) +
       '" style="fill:' + color + ';stroke:' + (isSelected ? 'var(--ink)' : 'none') + ';stroke-width:2"/>' +
       '<text x="' + n.x + '" y="' + (n.y + 4) + '">' + id + '</text>' +
       '<text class="map-label" x="' + n.x + '" y="' + (n.y + 40) + '">' + n.name + '</text>' +
@@ -308,10 +337,17 @@ function renderMap() {
     g.onclick = function () {
       if (g.dataset.id !== 'D') toggleSelect(g.dataset.id);
     };
+    g.onmousemove = function (e) { showTip(e, g.dataset.id); };
+    g.onmouseleave = function () { $('tip').style.display = 'none'; };
   });
 }
 
 // ================= 7. TRUCK ANIMATION =================
+
+let speed = 0.025;             // how far the truck moves each frame (set by the Speed slider)
+let reached = -1;              // how many route stops the truck has reached
+const TRUCK_CAPACITY = 1000;   // kg
+const KG_PER_PERCENT = 2;      // a bin that is 50% full holds 100 kg
 
 function dispatchTruck() {
   // Join all legs into one list of points to drive through
@@ -322,48 +358,139 @@ function dispatchTruck() {
     });
   });
 
+  const svgEl = $('map');
   const truck = $('truck');
-  const emptied = new Set();
+  const firstNode = svgEl.querySelector('.node');   // trail lines go under the circles
+  const totalRouteKm = totalKm;
   let step = 0;       // which road piece we are on
   let t = 0;          // progress on that piece, 0 to 1
+  let load = 0;       // kg picked up so far
+  let trail = newTrail(stops[0]);
 
   busy = true;
+  reached = 0;
   $('btnDispatch').disabled = true;
   $('truckText').textContent = 'TRUCK-01 · en route';
+  setLoad(0);
+  renderStops();
+
+  // A dark green line that follows the truck and shows where it has been
+  function newTrail(id) {
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', nodes[id].x);
+    line.setAttribute('y1', nodes[id].y);
+    line.setAttribute('x2', nodes[id].x);
+    line.setAttribute('y2', nodes[id].y);
+    line.setAttribute('style', 'stroke:#0d6b38;stroke-width:6;stroke-linecap:round');
+    svgEl.insertBefore(line, firstNode);
+    return line;
+  }
+
+  // Called every time the truck arrives at a point
+  function arrive(id) {
+    $('truckText').textContent = 'TRUCK-01 · at ' + nodes[id].name;
+    if (id !== route[reached + 1]) return;           // just passing through
+
+    reached++;
+    const bin = bins.find(function (b) { return b.id === id; });
+    if (bin) {
+      const kg = bin.c * KG_PER_PERCENT;
+      load += kg;
+      bin.c = 0;                                     // bin is emptied
+      setLoad(load);
+      toast('Collected ' + id + ' · +' + kg + ' kg');
+      renderBins();
+    }
+    renderStops();
+  }
 
   function move() {
     // Finished the whole route
     if (step >= stops.length - 1) {
       busy = false;
+      reached = -1;
       $('truckText').textContent = 'TRUCK-01 · done';
-      bins.forEach(function (b) {
-        if (emptied.has(b.id)) b.c = 0;      // emptied bins go back to 0%
-      });
+      toast('Route complete · ' + totalRouteKm.toFixed(1) + ' km · ' + load + ' kg collected');
       render();
       return;
     }
 
     const from = nodes[stops[step]];
     const to = nodes[stops[step + 1]];
-    t += 0.01;
+    t += speed;
     const p = Math.min(t, 1);
+    const x = from.x + (to.x - from.x) * p;
+    const y = from.y + (to.y - from.y) * p;
 
-    truck.setAttribute('x', from.x + (to.x - from.x) * p);
-    truck.setAttribute('y', from.y + (to.y - from.y) * p - 30);
+    truck.setAttribute('x', x);
+    truck.setAttribute('y', y - 30);
+    trail.setAttribute('x2', x);
+    trail.setAttribute('y2', y);
 
-    // Arrived at the next point
     if (t >= 1) {
       t = 0;
       step++;
-      const id = stops[step];
-      if (id !== 'D') emptied.add(id);
-      $('truckText').textContent = 'TRUCK-01 · at ' + nodes[id].name;
+      trail = newTrail(stops[step]);
+      arrive(stops[step]);
     }
 
     requestAnimationFrame(move);
   }
 
   move();
+}
+
+// Step-by-step list of stops under the map
+function renderStops() {
+  let html = '';
+  route.forEach(function (id, i) {
+    const bin = bins.find(function (b) { return b.id === id; });
+    let label;
+    if (id === 'D') label = (i === 0) ? 'Depot (start)' : 'Back to depot';
+    else label = id + ' · ' + bin.street;
+
+    let cls = 'stop';
+    if (i <= reached) cls += ' done';
+    else if (busy && i === reached + 1) cls += ' now';
+
+    html += '<li class="' + cls + '"><span class="num">' + (i <= reached ? '✓' : i + 1) + '</span>' + label + '</li>';
+  });
+  $('stops').innerHTML = (route.length > 1) ? html : '';
+}
+
+// Truck load meter
+function setLoad(kg) {
+  $('loadBar').style.width = Math.min(100, kg / TRUCK_CAPACITY * 100) + '%';
+  $('loadText').textContent = kg + ' / ' + TRUCK_CAPACITY + ' kg';
+}
+
+// Small message at the bottom of the screen
+let toastTimer = null;
+function toast(message) {
+  const el = $('toast');
+  el.textContent = message;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { el.classList.remove('show'); }, 2200);
+}
+
+// Tooltip when the mouse is over a circle on the map
+function showTip(e, id) {
+  const tip = $('tip');
+  const box = $('mapbox').getBoundingClientRect();
+  const bin = bins.find(function (b) { return b.id === id; });
+
+  if (bin) {
+    const hoursLeft = Math.max(0, (100 - bin.c) / bin.r);
+    tip.innerHTML = '<b>' + id + ' · ' + bin.street + '</b>' +
+      'Fill: ' + bin.c + '% (+' + bin.r + '% per hour)<br>Full in ' + hoursLeft.toFixed(1) + ' h';
+  } else {
+    tip.innerHTML = '<b>Depot</b>The truck starts and ends here';
+  }
+
+  tip.style.display = 'block';
+  tip.style.left = (e.clientX - box.left + 14) + 'px';
+  tip.style.top = (e.clientY - box.top + 14) + 'px';
 }
 
 // ================= 8. BUTTONS AND SLIDER =================
@@ -395,6 +522,25 @@ $('btnReset').onclick = async function () {
 // Return-to-depot checkbox
 $('returnBox').onchange = function () {
   if (!busy) render();
+};
+
+// Speed slider: 1 (slow) to 10 (fast). 5 gives 0.025, the original speed
+$('speed').oninput = function (e) {
+  speed = Number(e.target.value) * 0.005;
+};
+
+// Live simulation: bins fill up by themselves every 1.5 seconds
+let liveTimer = null;
+$('liveBox').onchange = function (e) {
+  if (e.target.checked) {
+    liveTimer = setInterval(function () {
+      if (busy) return;                     // pause while the truck is driving
+      bins.forEach(function (b) { b.c = Math.min(100, b.c + b.r); });
+      render();
+    }, 1500);
+  } else {
+    clearInterval(liveTimer);
+  }
 };
 
 // Dispatch button
